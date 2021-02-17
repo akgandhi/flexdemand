@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Flexible Estimation of Demand with Differentiated Products</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Amit Gandhi" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis.css" rel="stylesheet" />
+    <link href="libs/remark-css/metropolis-fonts.css" rel="stylesheet" />
+    <link href="libs/panelset/panelset.css" rel="stylesheet" />
+    <script src="libs/panelset/panelset.js"></script>
+    <link rel="stylesheet" href="mystyle.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Flexible Estimation of Demand with Differentiated Products
+## Presentation for UCLA Mini-Conference
+### Amit Gandhi
+### Microsoft and Upenn/Wharton
+### 2010/12/12 (updated: 2021-02-17)
+
+---
+
+
+
+
+
+
+
+
+layout: true
+background-image: url(images/pennlogo.png)
+background-position: 0% 100%
+background-size: 10%
+---
+
+
+---
+class: inverse, center, middle
+
+# Introduction
+
+---
+
+# Demand Estimation
+
+Demand estimation for differentiated products is an ubiquitous economic and industrial problem. 
+
+.pull-left[
+Influential BLP (1995) empirical framework 
+
+&lt;img src="images/blp95highlight.png" height="225" /&gt;
+]
+
+--
+
+.pull-right[
+The framework and technique simultaneously adresses:
+
+- own and cross-elasticities of demand, diversion ratios, etc
+
+
+- effects of a changes in product structure on demand, e.g., counterfactual prices, new product introduction, etc
+
+
+- consumer welfare
+]
+
+
+---
+# A Challenge
+
+While the framework remains general and widely applicable, the *technique* used to take the framework to the data can be limiting in practice:
+
+- It is difficult use *flexible* specifications of demand in empirical work. 
+    - Typical application uses independent normal random coefficients on generally a small subset of product characteristics
+    - Meaningful gap between standard empirical practice and the richness of the underlying demand framework.
+
+- Several reasons:
+
+    - non-linear instrumental variables
+    - weak instruments 
+    - computational difficulties, etc
+    
+- How can we use more flexible models in practice, particularly in the presence of larger, more detailed data sets. 
+???
+
+Data has evolved, models have evolved more slowly
+---
+
+
+
+# Our paper 
+
+
+- We provide a new estimation framework that enables flexible specifications to be taken to data
+
+- Key idea is that we "reverse" the BLP estimation idea
+    - estimation of (inverse) demand (**Step 1**)
+    - estimation of preferences (**Step 2**)
+    - **Decoupling** =&gt; flexible specifications in each step
+	  
+- Key problem we need to overcome: *curse of dimensionality* in demand
+    - Build on ideas from Gandhi and Houde (2020)
+    - First stage can be expressed as a **linear IV** problem estimated with **2SLS**
+    - Algorithmic model building techniques from ML literature naturally complement (aka *boosting*, *cross-fitting*)
+	
+- Can recover many of the quantities of interest from 1st step; 
+- 2nd step recovers the distribution of preferences (and potentially improves efficiency)   	
+
+---
+
+
+# The Model
+
+Structural model of demand based on product characteristics:
+
+- includes endogenous characteristics: prices
+- includes unobserved product characteristics: structural demand errors
+
+For product `\(j \in J\)` in market `\(t \in T\)`, let
+
+- `\(x_{jt} \in \mathbb{R}^{K}\)` be a vector of observed product characteristics
+- `\(\xi_{jt} \in \mathbb{R}\)` be ab *unobserved* product characteristic. 
+- Stack `\(x_t = (x_{jt})_{j\in J}\)` and `\(\xi_{t} = (\xi_{jt})_{j \in J}\)`
+
+Demand function for each product `\(j\)` in market `\(t\)` is `$$\sigma_{j} \left( x_{t}, \xi_{t} \right)$$`
+
+ 
+Every product's demand depends on every product's characteristics, both observed *and* unobserved
+
+---
+
+# Example
+
+
+
+.pull-left[
+BLP 1995 car dataset
+
+&lt;img src="images/blpdata.png" height="250" /&gt;
+
+]
+
+--
+
+.pull-right[
+Take `\(t = 1990\)`. 
+
+- 131 products
+
+- 9 measured characteristics
+
+- Each `\(j = 1,\dots, 131\)` has demand function `\(\sigma_{j}\)` 
+
+- Each `\(\sigma_{j}\)` a function `$$131 \times 9 = 1179 \mbox{ observed } x_{t}$$` `$$+131 \mbox{ unobserved } \xi_{t}$$` 
+
+- Repeat for each market `\(t = 1971, \dots, 1990.\)`
+]
+
+---
+
+# Micro Heteorogeneity to the Rescue
+
+.panelset[
+
+.panel[.panel-name[Theory]
+Consumers `\(i \in I\)`
+
+Each consumer has "tastes" `\(\beta_{i} \in B\)` distributed `\(F(\beta ;\theta)\)`.
+
+Consumer `\(i\)` has a *known* demand function `$$s_{j}(x_t, \xi_{t}; \beta_{i})$$` conditional on `\(\beta_{i}\)`
+
+Aggregation `$$\sigma_{j}\left(x_{t},\xi_{t}\right) = \int s_j\left(x_t, \xi_t; \beta_i\right)\, dF(\beta_i; \theta)$$`
+
+Flexibility of demand `\(\sigma_{j}\)` tied directly to parameterization `\(\theta\)` of `\(F\)`. 
+]
+
+.panel[.panel-name[Mixed Logit]
+
+Linear Random Coefficient Mixed Logit
+
+Consumer level demand functions are *logit* `$$s_{j}\left(x_{t}, \xi_{t}; \beta_{i}\right) = \frac{\exp\left(x_{jt}\beta_{i} + \xi_{jt} \right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \xi_{j^{\prime}t}\right)}$$`
+
+Market level demand is *mixed logit*
+
+`$$\sigma_{j}\left(x_{t}, \xi_{t} \right) =\int\frac{\exp\left(x_{jt}\beta_{i} + \xi_{jt} \right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \xi_{j^{\prime}t}\right)}dF(\beta_{i}; \theta)$$`
+When `\(F\)` is degenerate, market demand is logit. 
+]
+]
+---
+
+layout: true
+
+# But isn't this *just* a mixtures problem?
+
+---
+
+---
+
+## Yes, but....
+
+---
+
+`$$\sigma_{j}\left(x_{t}, \xi_{t} \right) =\int\frac{\exp\left(x_{jt}\beta_{i} + \xi_{jt} \right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \xi_{j^{\prime}t}\right)}dF(\beta_{i}; \theta)$$`
+
+---
+
+`$$\sigma_{j}\left(x_{t}, \color{red}{\xi_{t}} \right) =\int\frac{\exp\left(x_{jt}\beta_{i} + \color{red}{\xi_{jt}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{red}{\xi_{j^{\prime}t}}\right)}dF(\beta_{i}; \theta)$$`
+---
+
+`$$\require{cancel} \sigma_{j}\left(x_{t}, \color{red}{\cancel{\xi_{t}}} \right) =\int\frac{\exp\left(x_{jt}\beta_{i} + \color{red}{\cancel{\xi_{jt}}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{red}{\cancel{\xi_{j^{\prime}t}}}\right)}dF(\beta_{i}; \theta)$$`
+---
+
+`$$\require{cancel} \sigma_{j}\left(x_{t}, \color{red}{\cancel{\xi_{t}}} \right) =\int\frac{\exp\left(x_{jt}\beta_{i} + \color{red}{\cancel{\xi_{jt}}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{red}{\cancel{\xi_{j^{\prime}t}}}\right)}dF(\beta_{i}; \theta)$$`
+&lt;center&gt;
+&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;span&gt;&amp;#8615;&lt;/span&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;
+&lt;/center&gt;
+
+`$$\require{cancel} \sigma_{j}\left(x_{t}\right) =\int\frac{\exp\left(x_{jt}\beta_{i}  \right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} \right)}dF(\beta_{i}; \theta)$$`
+---
+
+`$$\require{cancel} \sigma_{j}\left(x_{t}, \color{red}{\cancel{\xi_{t}}} \right) =\int\frac{\exp\left(x_{jt}\beta_{i} + \color{red}{\cancel{\xi_{jt}}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{red}{\cancel{\xi_{j^{\prime}t}}}\right)}dF(\beta_{i}; \theta)$$`
+&lt;center&gt;
+&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;span&gt;&amp;#8615;&lt;/span&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;
+&lt;/center&gt;
+
+`$$\require{cancel} \underbrace{\sigma_{j}\left(x_{t}\right)}_{Data} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i}  \right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} \right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{unknown}$$`
+---
+`$$\require{cancel} \sigma_{j}\left(x_{t}, \color{red}{\cancel{\xi_{t}}} \right) =\int\frac{\exp\left(x_{jt}\beta_{i} + \color{red}{\cancel{\xi_{jt}}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{red}{\cancel{\xi_{j^{\prime}t}}}\right)}dF(\beta_{i}; \theta)$$`
+
+&lt;center&gt;
+&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;span&gt;&amp;#8615;&lt;/span&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;
+&lt;/center&gt;
+
+`$$\require{cancel} \underbrace{\sigma_{j}\left(x_{t}\right)}_{Data} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i}  \right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} \right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{unknown}$$`
+&lt;center&gt;
+&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;span&gt;&amp;#8615;&lt;/span&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;
+&lt;/center&gt;
+
+
+
+.center[
+&lt;font color = "blue"&gt;
+observed demand = predicted demand
+&lt;/font&gt;
+]
+
+--
+.center[
+`\(F\)` identified and flexibly estimatable with `\(x_{t}\)` variation.
+]
+
+--
+
+.center[
+e.g., Fox and Gandhi (2016), Fox et al (2012)...
+]
+---
+`$$\underbrace{\sigma_{j}\left(x_{t}, \color{red}{\xi_{t}} \right)}_{Demand} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i} + \color{red}{\xi_{jt}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{red}{\xi_{j^{\prime}t}}\right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{Unknown}$$`
+&lt;center&gt;
+&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;span&gt;&amp;#8613;&lt;/span&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;
+&lt;/center&gt;
+
+`$$\require{cancel} \underbrace{\sigma_{j}\left(x_{t}\right)}_{Data} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i}  \right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} \right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{unknown}$$`
+
+--
+
+
+If we can condition on `\(\color{red}{\xi_t}\)`, the flexible estimation can be approached as a standard mixtures problem. 
+
+--
+
+Equivalent to measuring *demand*.
+
+---
+layout: false
+---
+
+# Specifying Demand
+.panelset[
+
+.panel[.panel-name[Setup]
+
+&lt;br&gt;
+
+
+Transform market shares  `$$s_{jt} \mapsto \ln\left(\frac{s_{jt}}{s_{0t}}\right)$$`
+
+&lt;br&gt;
+
+Denote `$$\beta^{0} = E[\beta_{i}]$$` &lt;br&gt; which completely characterizes `\(\theta = \theta^{logit}\)` for the distribution `\(F(\beta_{i} ; \theta)\)`
+
+
+]
+
+
+.panel[.panel-name[General Approach]
+
+&lt;br&gt;&lt;br&gt;
+
+Can express WLOG `$$\ln\left(\frac{s_{jt}}{s_{0t}}\right) = \beta^{0} x_{jt} + \Delta_{j}(s_{t}, x_{t}) + \xi_{jt}$$` &lt;br&gt; &lt;br&gt;
+where `$$\Delta_{j}\left(s_t, x_t\right) = \sigma^{-1}(s_t, x_{t}; \theta^{0}) - \sigma^{-1}(s_t, x_{t}; \theta^{logit})$$` &lt;br&gt; is the *quality gap* (see **Gandhi and Houde** 2020)
+
+
+]
+
+.panel[.panel-name[Nested Logit Example]
+
+&lt;br&gt;&lt;br&gt;
+Berry (1994): `$$\ln \left(\frac{s_{jt}}{s_{0t}}\right) = \beta^{0}x_{jt} + \underbrace{\sigma\ln \left(\frac{s_{jt}}{s_{gt}}\right)}_{\color{red}{\Delta_{j}(s_{t}, x_{t})}} + \xi_{jt}$$`
+
+for
+
+- `\(g=1,\dots,G\)` denotes groups that partition `\(J\)`.
+
+- `\(s_{gt}\)`  denotes group market share 
+]
+
+.panel[.panel-name[Curse of Dimensionality]
+
+
+**[Gandhi and Houde 2020]**: Associate each product `\(j\)` with a state vector `\(\omega_{jt}\)` where
+
+`$$\omega_{jt}=\left(\omega'_{j,1,t},\dots,\omega'_{j,j-1,t},\omega'_{j,j+1,t},\dots,\omega'_{j,J,t}\right)$$`
+and
+- `\(\omega_{j,j^{\prime},t}=\left(s_{j^{\prime},t},d_{j,j',t}\right) \quad j \neq j'\)`
+- `\(d_{j,j',t}=\left(x_{2,jt}-x_{2,j't}\right)\)`
+
+Then `$$\Delta_{j}\left(x_t, s_t\right) = \Delta(\omega)$$` is exchangeable in `\(\omega\)`. 
+
+]
+]
+---
+
+# Estimation Strategy
+
+.panelset[
+
+.panel[.panel-name[General Approach]
+
+&lt;br&gt;&lt;br&gt;
+
+- Estimate `\(\hat{\beta}\)` and `\(\hat{\Delta}\)` to control for `\(\hat{\xi}_{jt}\)`
+
+- The exogenous variables are `\(x_{t}\)` with `$$E[\xi_{jt} \mid x_{t}] = 0$$`
+
+- Standard IV estimation
+]
+
+.panel[.panel-name[Estimating Equation]
+&lt;br&gt;
+The structural equation is `$$\log\left(\frac{s_{jt}}{s_{0t}}\right) = x_{jt}'\beta^{0} + \Delta(\omega_{jt}) + \xi_{jt}$$`
+&lt;br&gt; Approximation by basis functions `$$\Delta\left(\omega_{jt}\right) \approx \sum_{\ell=1}^{L} \gamma_{\ell}^{0} \psi_{\ell}\left(\omega_{jt}\right)$$`
+Or more generally `$$\Delta\left(\omega_{jt}\right) \approx \sum_{p=1}^{P} \alpha_{p}\phi_{p}\left(\psi(\omega_{jt}); \gamma_{p}^{0}\right) \,\, \mbox{for} \,\, \psi = (\psi_1, \dots, \psi_L)$$`
+
+]
+
+
+.panel[.panel-name[Basis Functions]
+
+Express WLOG `$$\Delta(\omega_{jt})=g(EDF(\omega_{jt}))$$` where EDF is the empirical distribution function.
+
+- Write `\(F_{jt}=EDF(\omega_{jt})\)`
+
+- Then we can `$$\Delta(\omega_{jt})\approx f(m_{1}(F_{jt}),\dots,m_{L}(F_{jt}))$$`.
+
+- Two key elements:
+    - Construct moments `\(m_{1}(F_{jt}),\dots,m_{L}(F_{jt})\)`,
+    - Construct predictive function `\(f(\cdot)\)`.
+]
+
+
+
+.panel[.panel-name[IV]
+
+IV estimator `$$E\left[\log\left(\frac{s_{jt}}{s_{0t}}\right) \middle| z_{jt} \right] = E\left[x_{jt}| z_{jt}\right]'\beta^{0}+\sum_{\ell=1}^{L}E\left[\psi_{\ell}(\omega_{jt})| z_{jt}\right]'\gamma_{\ell}^{0}$$`
+
+
+- Implementation is a simple 2SLS. 
+
+- Apply Gandhi-Houde instruments to build `\(z_{t}\)` for market share terms and standard price instruments
+
+- Can use recent ML approaches for approximating optimal IV construction (see e.g., XXX), e.g., **MLIV's, cross-fitting, etc**, to automate building IV's for multiple endogenous regressors. 
+
+]
+]
+---
+
+# What have we learned?
+
+- Estimation gives `\(\beta^{0}\)` and `\(\Delta(s_t,x_t)\)`
+
+- Allows us to recover `$$\xi_{jt} = \ln\left( \frac{s_{jt}}{s_{0t}}\right) - \beta^{0}x_{jt} - \Delta(s_t, x_t)$$` 
+
+- We also recover *inverse demand* `$$\xi_{jt} = \sigma^{-1}(s_t,x_t)$$`
+
+- Can be used to construct price elasticities, diversion ratios, etc without explicit estimation of preference heterogeneity.
+
+---
+
+# From Demand to Preferences
+
+.panelset[
+
+.panel[.panel-name[Back to Mixtures]
+
+Control for `$$\delta_{jt}=\log\left(\frac{s_{jt}}{s_{0t}}\right) - \Delta({\omega_{jt})}$$`
+
+Recover demand `$$s_{jt} = s_{j}\left(\delta_{t}, x_{t}\right)$$`
+
+Solve integral equation, e.g., minimize objective function `$$Q(f) = \sum_{t=1}^{T} \sum_{j=1}^{J} \left( s_{jt} - \int \hat{s}_{j}(\delta_{t}, x_{t};\nu_{it}) f(\nu_{it})d\nu_{it} \right)^{2}$$`
+		
+for `\(\hat{s}_{j}(\delta_{t}, x_{t};\nu_{it}) = \frac{\exp(\hat{\delta}_{jt}+x'_{jt}\nu_{it})}{1+\sum_{j=1}^{J}\exp\left(\hat{\delta}_{jt}+x'_{jt}\nu_{it}\right)}\)`.
+
+]
+
+
+.panel[.panel-name[A linear approach: FKRB]
+
+Fox, Kim, Ryan, and Bajari (2011) approach mixed logit estimation (without `\(\xi_{jt}\)`) constrained least squares problem
+
+Objective function becomes `$$Q_{FKRB}(\theta) \approx \sum_{t=1}^{T} \sum_{j=1}^{J} \left( s_{jt} - \sum_{r=1}^{R} \theta^{r} \hat{s}_{j}(\delta_{t}, x_{t},\nu^r) \right)^{2}$$`
+&lt;br&gt;
+- `\(\theta\)` must lie on the unit simplex `\(\Rightarrow\)` Constrained LS problem, unique global optimum is guaranteed
+- Computationally fast 
+]
+
+.panel[.panel-name[Grid Points]
+
+Picking a grid:
+- Equispaced grid
+- Random grid (uniform draws, Halton and Weyl sequences, etc.)
+- A grid should be dense enough to ensure consistency
+
+Performance:
+
+- FKRB recommend to use equispaced grids in small samples
+- Our simulations confirm that: FKRB estimates are based on equispaced grid and robust.
+]
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"includePresenterNotes": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
