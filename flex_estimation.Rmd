@@ -390,6 +390,8 @@ IV estimator $$E\left[\log\left(\frac{s_{jt}}{s_{0t}}\right) \middle| z_{jt} \ri
 
 # What have we learned?
 
+<br><br><br>
+
 - Estimation gives $\beta^{0}$ and $\Delta(s_t,x_t)$
 
 - Allows us to recover $$\xi_{jt} = \ln\left( \frac{s_{jt}}{s_{0t}}\right) - \beta^{0}x_{jt} - \Delta(s_t, x_t)$$ 
@@ -440,3 +442,209 @@ Performance:
 - Our simulations confirm that: FKRB estimates are based on equispaced grid and robust.
 ]
 ]
+
+---
+
+# Monte Carlo
+
+.panelset[
+
+.panel[.panel-name[Design]
+
+Random coefficients follow a mixture of correlated normal distributions, $\beta_{i} = \frac{1}{3}\sum_{s=1}^{3}\zeta_{s}$:
+
+$$\begin{array}{c}{\zeta_{1}}\end{array} \sim \mathcal{N}\left(\left[\begin{array}{c}{7} \\ {4} \\ {7} \\ {4}\end{array}\right],\left[\begin{array}{cccc}{1} & {0.35} & {0.35} & {0.35} \\ {0.35} & {1} & {0.35} & {0.35} \\ {0.35} & {0.35} & {1} & {0.35} \\ {0.35} & {0.35} & {0.35} & {1} \end{array}\right]\right)$$
+
+$$\begin{array}{c}{\zeta_{2}}\end{array} \sim \mathcal{N}\left(\left[\begin{array}{c}{-9} \\ {5} \\ {-9} \\ {5}\end{array}\right],\left[\begin{array}{cccc}{3.6} & {1.4} & {1.4} & {1.4} \\ {1.4} & {3.6} & {1.4} & {1.4} \\ {1.4} & {1.4} & {1.8} & {1.4} \\ {1.4} & {1.4} & {1.4} & {1.8} \end{array}\right]\right)$$
+
+$$\begin{array}{c}{\zeta_{3}}\end{array} \sim \mathcal{N}\left(\left[\begin{array}{c}{2} \\ {-9} \\ {2} \\ {-9}\end{array}\right],\left[\begin{array}{cccc}{1.8} & {0.2} & {0.2} & {0.2} \\ {0.2} & {1.8} & {0.2} & {0.2} \\ {0.2} & {0.2} & {3.6} & {0.2} \\ {0.2} & {0.2} & {0.2} & {3.6} \end{array}\right]\right)$$
+
+
+
+]
+
+.panel[.panel-name[Results]
+.pull-left[
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;">NPIV+IFT</th>
+<th style="text-align: center;">NPIV+FKRB</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;" colspan="5">T = 200, J = 20</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;" colspan="5">Own Price</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Bias</td>
+<td style="text-align: center;">0.178</td>
+<td style="text-align: center;">0.228</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">RMSE</td>
+<td style="text-align: center;">0.213</td>
+<td style="text-align: center;">0.414</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;" colspan="5">Cross Price</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Bias</td>
+<td style="text-align: center;">-0.052</td>
+<td style="text-align: center;">-0.0119</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">RMSE</td>
+<td style="text-align: center;">0.105</td>
+<td style="text-align: center;">0.056</td>
+</tr>
+</tbody>
+</table>
+]
+
+.pull-right[
+
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"></th>
+<th style="text-align: center;">NPIV+IFT</th>
+<th style="text-align: center;">NPIV+FKRB</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;" colspan="5">T = 700, J = 20</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;" colspan="5">Own Price</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Bias</td>
+<td style="text-align: center;">0.0260</td>
+<td style="text-align: center;">0.118</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">RMSE</td>
+<td style="text-align: center;">0.113</td>
+<td style="text-align: center;">0.338</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;" colspan="5">Cross Price</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Bias</td>
+<td style="text-align: center;">-0.049</td>
+<td style="text-align: center;">-0.005</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">RMSE</td>
+<td style="text-align: center;">0.102</td>
+<td style="text-align: center;">0.047</td>
+</tr>
+</tbody>
+</table>
+
+]
+]
+]
+
+---
+
+# Application to Soda Data
+
+.panelset[
+
+.panel[.panel-name[IRI Data]
+
+<br><br>
+
+- IRI academic data set: 11 years of weekly store data (2001-2011) for chain grocery and drug stores in 50 designated market areas (DMAs). 
+
+- US soda market in 2003: National level soda sales and treat each week as market (52 markets). 
+
+- We pick top 30 sub-brands with the largest sales across the whole time span and treat other sub-brands as an outside option.
+]
+
+.panel[.panel-name[Product Characteristics]
+
+<br><br>
+
+- Sodas can be sold either in bottles or cans: focus here only on cans and aggregate across different package sizes.
+
+- Soda characteristics include flavor/scent, calorie level, caffeine level, and type of sweetener. Many binary characteristics.
+
+- We put random coefficients on all non-price attributes and treat the price  with a fixed coefficient.
+]
+
+.panel[.panel-name[Elasticities]
+
+![](images/elasticities.PNG)
+
+]
+]
+
+---
+
+# Heterogeneity
+
+.panelset[
+
+.panel[.panel-name[Caffeine+Sugar]
+
+
+![](images/Caffeine_Sugar_3RCs.png)
+
+]
+
+.panel[.panel-name[Cola+Caffeine]
+
+![](images/Cola_Caffeine_3RCs.png)
+
+
+]
+
+.panel[.panel-name[Cola+Sugar]
+
+![](images/Cola_Sugar_3RCs.png)
+]
+
+.panel[.panel-name[Marginals]
+
+![](images/heterogeneity.png)
+]
+]
+
+---
+# Extension: Feature Selection
+
+<br><br>
+Recall that the first-stage IV regression model is $$\log(s_{jt}/s_{0t}) \approx x'_{jt}\beta_{0}+\psi^{L}(\omega_{jt})'\gamma_{0}+\xi_{jt},$$
+where $\omega_{jt}=\left(s_{jt},d_{jt}\right)$.
+<br>
+The number of coefficients increases exponentially for the nonlinear terms with r.c.'s:
+- $dim(x_{2}+1)=8$, $L=2$, then $(L+1)^{dim(x)+1}=6561$
+- $dim(x_{2}+1)=9$, $L=2$, then $(L+1)^{dim(x)+1}=19683$
+- $dim(x_{2}+1)=10$, $L=2$, then $(L+1)^{dim(x)+1}=59049$
+
+--
+
+Feature engineering on demand (Lasso, Neural Nets, etc) with text/image/voice data
+
+---
+
+# Final Comments
+
+<br><br>
+- Approach opens up a new playbook for estimating demand in a flexible way
+
+- Compatible with applications of variety of machine learning methods for instrumental variable selection and regularization
+
+- Fast and scaleable - estimating demand across many categories as opposed to one at a time. 
+
+
