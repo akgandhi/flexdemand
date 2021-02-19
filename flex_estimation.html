@@ -74,28 +74,27 @@ Distinguish the **BLP model** and the **BLP method**
 # Our paper 
 
 
-- We provide a new estimation framework that enables *flexible specifications* **consistent with the BLP model** to be taken to data
+- We offer an estimation framework that enables *flexible specifications* **consistent with the BLP model** to be taken to data in a computationally tractable way. 
 
-- Existing techniques limit the flexibility of demand specifications used in practice
-    - Independent normal RC's on a small number of characteristics 
+--
+
+- Current techniques in practice typically relies on relatively limited distribution of heterogeneity
+    - independent normal RC's on a small number of characteristics 
+    - Both numerical inversion and non-linear IV estimation limit the flexibility
+
+--
 
 - Key idea is that we "reverse" the BLP estimation idea
     - estimation of (inverse) demand (**Step 1**)
     - estimation of preferences (**Step 2**)
-    - **Decoupling** =&gt; flexible specifications in each step
-	  
-	
-- Can recover many of the quantities of interest from 1st step; 
-- 2nd step recovers the distribution of preferences (and potentially improves efficiency)   	
+    - **Decoupling** =&gt; flexible specifications and computational tractability in each step (linear models, ML technique, etc)
+    - parallels identification logic in Berry and Haile (2014)
+
 
 ---
 
 # Related Literature
 
-**Exchangeability in BLP**: 
-
-- BLP (1995)
-- Gandhi and Houde (2020)
 
 **Linear IV Estimators and BLP**
 
@@ -107,6 +106,11 @@ Distinguish the **BLP model** and the **BLP method**
 - Berry, Gandhi, and Haile (2013)
 - Berry and Haile (2014)
 - Berry and Haile (2020)
+
+**Exchangeability in BLP**: 
+
+- BLP (1995)
+- Gandhi and Houde (2020)
 
 ---
 
@@ -168,20 +172,20 @@ Take `\(t = 1990\)`.
 
 .panelset[
 
-.panel[.panel-name[Consumers]
+.panel[.panel-name[Heterogeneity]
 
 &lt;br&gt;&lt;br&gt;
 Consumers `\(i \in I\)`
 
 Each consumer has "tastes" `\(\beta_{i} \in B\)` distributed `\(F(\beta ;\theta)\)`.
 
-Consumer `\(i\)` has a *known* demand function `$$s_{j}(x_t, \xi_{t}; \beta_{i})$$` conditional on `\(\beta_{i}\)`
+Consumer `\(\beta_{i}\)` has a *known* demand function `$$s_{j}(x_t, \xi_{t}; \beta_{i})$$` conditional on `\(\beta_{i}\)`
 ]
 
-.panel[.panel-name[Heterogeneity]
+.panel[.panel-name[Aggregation]
 &lt;br&gt;&lt;br&gt;
 Aggregation `$$\sigma_{j}\left(x_{t},\xi_{t}\right) = \int s_j\left(x_t, \xi_t; \beta_i\right)\, dF(\beta_i; \theta)$$`
-
+&lt;br&gt;
 Flexibility of demand `\(\sigma_{j}\)` tied directly to parameterization `\(\theta\)` of `\(F\)`. 
 ]
 
@@ -265,7 +269,9 @@ observed demand = predicted demand
 e.g., Fox and Gandhi (2016), Fox et al (2012)...
 ]
 ---
-`$$\underbrace{\sigma_{j}\left(x_{t}, \color{red}{\xi_{t}} \right)}_{Demand} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i} + \color{red}{\xi_{jt}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{red}{\xi_{j^{\prime}t}}\right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{Unknown}$$`
+
+`$$\sigma_{j}\left(x_{t}, \color{red}{\xi_{t}} \right) =\int\frac{\exp\left(x_{jt}\beta_{i} + \color{red}{\xi_{jt}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{red}{\xi_{j^{\prime}t}}\right)}dF(\beta_{i}; \theta)$$`
+
 &lt;center&gt;
 &lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;span&gt;&amp;#8613;&lt;/span&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;
 &lt;/center&gt;
@@ -277,6 +283,21 @@ e.g., Fox and Gandhi (2016), Fox et al (2012)...
 
 If we can condition on `\(\color{red}{\xi_t}\)`, the flexible estimation can be approached as a standard mixtures problem. 
 
+---
+
+`$$\underbrace{\sigma_{j}\left(x_{t}, \color{red}{\xi_{t}} \right)}_{Demand} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i} + \color{red}{\xi_{jt}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{red}{\xi_{j^{\prime}t}}\right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{Unknown}$$`
+&lt;center&gt;
+&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;big&gt;&lt;span&gt;&amp;#8613;&lt;/span&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;&lt;/big&gt;
+&lt;/center&gt;
+
+`$$\require{cancel} \underbrace{\sigma_{j}\left(x_{t}\right)}_{Data} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i}  \right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} \right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{unknown}$$`
+
+
+
+
+If we can condition on `\(\color{red}{\xi_t}\)`, the flexible estimation can be approached as a standard mixtures problem. 
+
+
 --
 
 Equivalent to measuring *demand*.
@@ -284,7 +305,7 @@ Equivalent to measuring *demand*.
 
 ---
 layout: false
-# Specifying Demand
+# Demand
 .panelset[
 
 .panel[.panel-name[Setup]
@@ -302,7 +323,7 @@ Denote `$$\beta^{0} = E[\beta_{i}]$$` &lt;br&gt; which completely characterizes 
 ]
 
 
-.panel[.panel-name[General Approach]
+.panel[.panel-name[Model]
 
 &lt;br&gt;&lt;br&gt;
 
@@ -324,17 +345,25 @@ for
 - `\(s_{gt}\)`  denotes group market share 
 ]
 
-.panel[.panel-name[Curse of Dimensionality]
 
 
-**[Gandhi and Houde 2020]**: Associate each product `\(j\)` with a state vector `\(\omega_{jt}\)` where
+.panel[.panel-name[Exchangeability]
 
-`$$\omega_{jt}=\left(\omega'_{j,1,t},\dots,\omega'_{j,j-1,t},\omega'_{j,j+1,t},\dots,\omega'_{j,J,t}\right)$$`
-and
-- `\(\omega_{j,j^{\prime},t}=\left(s_{j^{\prime},t},d_{j,j',t}\right) \quad j \neq j'\)`
-- `\(d_{j,j',t}=\left(x_{2,jt}-x_{2,j't}\right)\)`
 
-Then `$$\Delta_{j}\left(x_t, s_t\right) = \Delta(\omega)$$` is exchangeable in `\(\omega\)`. 
+**[Gandhi and Houde 2020]**: `$$\Delta_{j}\left(x_t, s_t\right) = \Delta(\omega_{jt})$$` is exchangeable in the `\(J\)` length state vector `\(\omega_{jt}\)`.
+
+
+`$$\omega_{jt}=\left(\omega'_{j,0,t},\dots,\omega'_{j,j-1,t},\omega'_{j,j+1,t},\dots,\omega'_{j,J,t}\right)$$`
+where
+
+&lt;br&gt;
+
+
+`\(\omega_{j,j^{\prime},t}=\left(s_{j^{\prime},t},d_{j,j',t}\right)\)` is a `\(K+1\)` length vector.
+
+
+`\(d_{j,j',t}=\left(x_{jt}-x_{j't}\right)\)` is a `\(K\)` length vector
+
 
 ]
 ]
@@ -362,24 +391,27 @@ IV estimator `$$E\left[\log\left(\frac{s_{jt}}{s_{0t}}\right) \middle| z_{jt} \r
 
 - Implementation is a simple 2SLS. 
 
-- Apply Gandhi-Houde instruments to build `\(z_{t}\)` for market share terms and standard price instruments
+- Apply Gandhi-Houde style (differentiation) instruments to build `\(z_{t}\)` for `\(\psi_{\ell}\)` terms and standard price instruments
 
-- Can use recent ML approaches for approximating optimal IV construction (see e.g., XXX), e.g., **MLIV's, cross-fitting, etc**, to automate building IV's for multiple endogenous regressors. 
+- Can use recent ML approaches for approximating optimal IV construction (see e.g., Gandhi, Hosanagar, Singh 2020, Lewis et al 2020, etc), e.g., **MLIV's, cross-fitting, etc**, to automate building IV's for multiple (many) endogenous regressors. 
 
 ]
 
 
 .panel[.panel-name[Basis Functions]
 
-Express WLOG `$$\Delta(\omega_{jt})=g(EDF(\omega_{jt}))$$` where EDF is the empirical distribution function.
+Extract exchangeable basis functions as **moments** of data vector `\(\omega_{jt}\)`
 
-- Write `\(F_{jt}=EDF(\omega_{jt})\)`
 
-- Then we can `$$\Delta(\omega_{jt})\approx f(m_{1}(F_{jt}),\dots,m_{L}(F_{jt}))$$`.
+**Example**: `\(2^{nd}\)` order moments with `\(K=2\)`
 
-- Two key elements:
-    - Construct moments `\(m_{1}(F_{jt}),\dots,m_{L}(F_{jt})\)`,
-    - Construct predictive function `\(f(\cdot)\)`.
+&lt;br&gt;
+
+`\begin{align*}
+&amp;\frac{1}{J}\sum_{j=1}^{J}s_{j}\times d_{j}^{(1)}, \frac{1}{J}\sum_{j=1}^{J}s_{j}\times d_{j}^{(2)},\frac{1}{J}\sum_{j=1}^{J}s_{j}\times\left(d_{j}^{(1)}\right)^{2},\frac{1}{J}\sum_{j=1}^{J}s_{j}\times\left(d_{j}^{(2)}\right)^{2} \\
+&amp; \frac{1}{J}\sum_{j=1}^{J}\left(s_{j}\right)^{2}\times d_{j}^{(1)}, \frac{1}{J}\sum_{j=1}^{J}\left(s_{j}\right)^{2}\times d_{j}^{(2)},\frac{1}{J}\sum_{j=1}^{J}s_{j}\times d_{j}^{(1)}\times d_{j}^{(2)}
+\end{align*}`
+
 ]
 
 ]
@@ -387,9 +419,9 @@ Express WLOG `$$\Delta(\omega_{jt})=g(EDF(\omega_{jt}))$$` where EDF is the empi
 
 # What have we learned?
 
-&lt;br&gt;&lt;br&gt;&lt;br&gt;
+&lt;br&gt;&lt;br&gt;
 
-- Estimation gives `\(\beta^{0}\)` and `\(\Delta(s_t,x_t)\)`
+- First step gives `\(\hat{\beta}\)` and `\(\hat{\Delta}(s_t,x_t)\)`
 
 - Allows us to recover `$$\xi_{jt} = \ln\left( \frac{s_{jt}}{s_{0t}}\right) - \beta^{0}x_{jt} - \Delta(s_t, x_t)$$` 
 
@@ -466,8 +498,8 @@ Random coefficients follow a mixture of correlated normal distributions, `\(\bet
 &lt;thead&gt;
 &lt;tr class="header"&gt;
 &lt;th style="text-align: center;"&gt;&lt;/th&gt;
-&lt;th style="text-align: center;"&gt;NPIV+IFT&lt;/th&gt;
-&lt;th style="text-align: center;"&gt;NPIV+FKRB&lt;/th&gt;
+&lt;th style="text-align: center;"&gt;First Step&lt;/th&gt;
+&lt;th style="text-align: center;"&gt;Second Step &lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
@@ -475,7 +507,7 @@ Random coefficients follow a mixture of correlated normal distributions, `\(\bet
 &lt;td style="text-align: center;" colspan="5"&gt;T = 200, J = 20&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class="even"&gt;
-&lt;td style="text-align: center;" colspan="5"&gt;Own Price&lt;/td&gt;
+&lt;td style="text-align: center;" colspan="5"&gt; &lt;font color = "red"&gt; Own Price &lt;/font&gt; &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class="odd"&gt;
 &lt;td style="text-align: center;"&gt;Bias&lt;/td&gt;
@@ -488,7 +520,7 @@ Random coefficients follow a mixture of correlated normal distributions, `\(\bet
 &lt;td style="text-align: center;"&gt;0.414&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class="odd"&gt;
-&lt;td style="text-align: center;" colspan="5"&gt;Cross Price&lt;/td&gt;
+&lt;td style="text-align: center;" colspan="5"&gt; &lt;font color = "red"&gt; Cross Price &lt;/font&gt; &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class="even"&gt;
 &lt;td style="text-align: center;"&gt;Bias&lt;/td&gt;
@@ -510,8 +542,8 @@ Random coefficients follow a mixture of correlated normal distributions, `\(\bet
 &lt;thead&gt;
 &lt;tr class="header"&gt;
 &lt;th style="text-align: center;"&gt;&lt;/th&gt;
-&lt;th style="text-align: center;"&gt;NPIV+IFT&lt;/th&gt;
-&lt;th style="text-align: center;"&gt;NPIV+FKRB&lt;/th&gt;
+&lt;th style="text-align: center;"&gt;First Step&lt;/th&gt;
+&lt;th style="text-align: center;"&gt;Second Step&lt;/th&gt;
 &lt;/tr&gt;
 &lt;/thead&gt;
 &lt;tbody&gt;
@@ -519,7 +551,7 @@ Random coefficients follow a mixture of correlated normal distributions, `\(\bet
 &lt;td style="text-align: center;" colspan="5"&gt;T = 700, J = 20&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class="odd"&gt;
-&lt;td style="text-align: center;" colspan="5"&gt;Own Price&lt;/td&gt;
+&lt;td style="text-align: center;" colspan="5"&gt;&lt;font color = "red"&gt; Own Price &lt;/font&gt; &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class="even"&gt;
 &lt;td style="text-align: center;"&gt;Bias&lt;/td&gt;
@@ -532,7 +564,7 @@ Random coefficients follow a mixture of correlated normal distributions, `\(\bet
 &lt;td style="text-align: center;"&gt;0.338&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class="even"&gt;
-&lt;td style="text-align: center;" colspan="5"&gt;Cross Price&lt;/td&gt;
+&lt;td style="text-align: center;" colspan="5"&gt;&lt;font color = "red"&gt; Cross Price &lt;/font&gt; &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr class="odd"&gt;
 &lt;td style="text-align: center;"&gt;Bias&lt;/td&gt;
@@ -593,7 +625,7 @@ Specification `$$u_{ijt}=-\alpha_{0}p_{jt}+x_{1,jt}^{\top}\beta^{0}+\xi_{jt}+b_{
 - `\(x_{2,jt} =\)` "Sugar", "Caffeine", "Cola" and "Ginger Ale"
 - `\(b_{t}\)` is brand fixed effects. 
 
-We use FKRB estimator in the second stage nd set the number of grids in each direction to be 5 so the total number of grid points is 625. 
+We use FKRB estimator in the second stage and set the number of grids in each direction to be 5 so the total number of grid points is 625. 
 ]
 
 .panel[.panel-name[Results]
@@ -628,7 +660,7 @@ The number of coefficients increases exponentially for the nonlinear terms with 
 - `\(dim(x_{2}+1)=9\)`, `\(L=2\)`, then `\((L+1)^{dim(x)+1}=19683\)`
 - `\(dim(x_{2}+1)=10\)`, `\(L=2\)`, then `\((L+1)^{dim(x)+1}=59049\)`
 
---
+
 
 Feature engineering on demand (Lasso, Neural Nets, etc) with text/image/voice data
 
