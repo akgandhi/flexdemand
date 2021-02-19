@@ -50,7 +50,7 @@ knitr::include_graphics("images/blp95highlight.png")
 --
 
 .pull-right[
-The framework and technique simultaneously adresses:
+Framework simultaneously adresses:
 
 - own and cross-elasticities of demand, diversion ratios, etc
 
