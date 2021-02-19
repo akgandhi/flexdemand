@@ -1,9 +1,9 @@
 ---
-title: "Flexible Estimation of Demand with Differentiated Products"
+title: "Flexible Estimation of Demand with Differentiated Products (w/ Aviv Nevo and Jing Tao)"
 subtitle: "Presentation for UCLA Mini-Conference"
-author: "Amit Gandhi"
-institute: "Microsoft and Upenn/Wharton"
-date: "2010/12/12 (updated: `r Sys.Date()`)"
+author: Amit Gandhi 
+institute: Microsoft and Upenn/Wharton
+date: "`r Sys.Date()`"
 output:
   xaringan::moon_reader:
     css: [default, metropolis, metropolis-fonts, mystyle.css]
@@ -32,16 +32,12 @@ background-size: 10%
 ---
 
 
----
-class: inverse, center, middle
 
 # Introduction
 
----
-
-# Demand Estimation
-
 Demand estimation for differentiated products is an ubiquitous economic and industrial problem. 
+
+--
 
 .pull-left[
 Influential BLP (1995) empirical framework 
@@ -65,50 +61,49 @@ The framework and technique simultaneously adresses:
 - consumer welfare
 ]
 
+--
 
+Distinguish the **BLP model** and the **BLP method**
 ---
-# A Challenge
-
-While the framework remains general and widely applicable, the *technique* used to take the framework to the data can be limiting in practice:
-
-- It is difficult use *flexible* specifications of demand in empirical work. 
-    - Typical application uses independent normal random coefficients on generally a small subset of product characteristics
-    - Meaningful gap between standard empirical practice and the richness of the underlying demand framework.
-
-- Several reasons:
-
-    - non-linear instrumental variables
-    - weak instruments 
-    - computational difficulties, etc
-    
-- How can we use more flexible models in practice, particularly in the presence of larger, more detailed data sets. 
-???
-
-Data has evolved, models have evolved more slowly
----
-
-
 
 # Our paper 
 
 
-- We provide a new estimation framework that enables flexible specifications to be taken to data
+- We provide a new estimation framework that enables *flexible specifications* **consistent with the BLP model** to be taken to data
+
+- Existing techniques limit the flexibility of demand specifications used in practice
+    - Independent normal RC's on a small number of characteristics 
 
 - Key idea is that we "reverse" the BLP estimation idea
     - estimation of (inverse) demand (**Step 1**)
     - estimation of preferences (**Step 2**)
     - **Decoupling** => flexible specifications in each step
 	  
-- Key problem we need to overcome: *curse of dimensionality* in demand
-    - Build on ideas from Gandhi and Houde (2020)
-    - First stage can be expressed as a **linear IV** problem estimated with **2SLS**
-    - Algorithmic model building techniques from ML literature naturally complement (aka *boosting*, *cross-fitting*)
 	
 - Can recover many of the quantities of interest from 1st step; 
 - 2nd step recovers the distribution of preferences (and potentially improves efficiency)   	
 
 ---
 
+# Related Literature
+
+**Exchangeability in BLP**: 
+
+- BLP (1995)
+- Gandhi and Houde (2020)
+
+**Linear IV Estimators and BLP**
+
+- Compiani (2020)
+- Salanie and Wolak (2019)
+- Fosgerau, Monardo, de Palma (2019)
+
+**Nonparametric identification of BLP**
+- Berry, Gandhi, and Haile (2013)
+- Berry and Haile (2014)
+- Berry and Haile (2020)
+
+---
 
 # The Model
 
@@ -117,11 +112,15 @@ Structural model of demand based on product characteristics:
 - includes endogenous characteristics: prices
 - includes unobserved product characteristics: structural demand errors
 
+--
+
 For product $j \in J$ in market $t \in T$, let
 
 - $x_{jt} \in \mathbb{R}^{K}$ be a vector of observed product characteristics
 - $\xi_{jt} \in \mathbb{R}$ be ab *unobserved* product characteristic. 
 - Stack $x_t = (x_{jt})_{j\in J}$ and $\xi_{t} = (\xi_{jt})_{j \in J}$
+
+--
 
 Demand function for each product $j$ in market $t$ is $$\sigma_{j} \left( x_{t}, \xi_{t} \right)$$
 
@@ -154,24 +153,30 @@ Take $t = 1990$.
 
 - Each $j = 1,\dots, 131$ has demand function $\sigma_{j}$ 
 
-- Each $\sigma_{j}$ a function $$131 \times 9 = 1179 \mbox{ observed } x_{t}$$ $$+131 \mbox{ unobserved } \xi_{t}$$ 
+
+- Each $\sigma_{j}$ is a function of $$131 \times 9 = 1179 \mbox{ observed } x_{t}$$ $$+131 \mbox{ unobserved } \xi_{t}$$ 
 
 - Repeat for each market $t = 1971, \dots, 1990.$
 ]
 
 ---
 
-# Micro Heteorogeneity to the Rescue
+# Micro Heteorogeneity 
 
 .panelset[
 
-.panel[.panel-name[Theory]
+.panel[.panel-name[Consumers]
+
+<br><br>
 Consumers $i \in I$
 
 Each consumer has "tastes" $\beta_{i} \in B$ distributed $F(\beta ;\theta)$.
 
 Consumer $i$ has a *known* demand function $$s_{j}(x_t, \xi_{t}; \beta_{i})$$ conditional on $\beta_{i}$
+]
 
+.panel[.panel-name[Heterogeneity]
+<br><br>
 Aggregation $$\sigma_{j}\left(x_{t},\xi_{t}\right) = \int s_j\left(x_t, \xi_t; \beta_i\right)\, dF(\beta_i; \theta)$$
 
 Flexibility of demand $\sigma_{j}$ tied directly to parameterization $\theta$ of $F$. 
@@ -179,7 +184,6 @@ Flexibility of demand $\sigma_{j}$ tied directly to parameterization $\theta$ of
 
 .panel[.panel-name[Mixed Logit]
 
-Linear Random Coefficient Mixed Logit
 
 Consumer level demand functions are *logit* $$s_{j}\left(x_{t}, \xi_{t}; \beta_{i}\right) = \frac{\exp\left(x_{jt}\beta_{i} + \xi_{jt} \right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \xi_{j^{\prime}t}\right)}$$
 
@@ -274,10 +278,9 @@ If we can condition on $\color{red}{\xi_t}$, the flexible estimation can be appr
 
 Equivalent to measuring *demand*.
 
+
 ---
 layout: false
----
-
 # Specifying Demand
 .panelset[
 
@@ -338,22 +341,27 @@ Then $$\Delta_{j}\left(x_t, s_t\right) = \Delta(\omega)$$ is exchangeable in $\o
 
 .panelset[
 
-.panel[.panel-name[General Approach]
-
-<br><br>
-
-- Estimate $\hat{\beta}$ and $\hat{\Delta}$ to control for $\hat{\xi}_{jt}$
-
-- The exogenous variables are $x_{t}$ with $$E[\xi_{jt} \mid x_{t}] = 0$$
-
-- Standard IV estimation
-]
 
 .panel[.panel-name[Estimating Equation]
 <br>
 The structural equation is $$\log\left(\frac{s_{jt}}{s_{0t}}\right) = x_{jt}'\beta^{0} + \Delta(\omega_{jt}) + \xi_{jt}$$
 <br> Approximation by basis functions $$\Delta\left(\omega_{jt}\right) \approx \sum_{\ell=1}^{L} \gamma_{\ell}^{0} \psi_{\ell}\left(\omega_{jt}\right)$$
 Or more generally $$\Delta\left(\omega_{jt}\right) \approx \sum_{p=1}^{P} \alpha_{p}\phi_{p}\left(\psi(\omega_{jt}); \gamma_{p}^{0}\right) \,\, \mbox{for} \,\, \psi = (\psi_1, \dots, \psi_L)$$
+
+]
+
+
+
+.panel[.panel-name[IV]
+
+IV estimator $$E\left[\log\left(\frac{s_{jt}}{s_{0t}}\right) \middle| z_{jt} \right] = E\left[x_{jt}| z_{jt}\right]'\beta^{0}+\sum_{\ell=1}^{L}E\left[\psi_{\ell}(\omega_{jt})| z_{jt}\right]'\gamma_{\ell}^{0}$$
+
+
+- Implementation is a simple 2SLS. 
+
+- Apply Gandhi-Houde instruments to build $z_{t}$ for market share terms and standard price instruments
+
+- Can use recent ML approaches for approximating optimal IV construction (see e.g., XXX), e.g., **MLIV's, cross-fitting, etc**, to automate building IV's for multiple endogenous regressors. 
 
 ]
 
@@ -371,20 +379,6 @@ Express WLOG $$\Delta(\omega_{jt})=g(EDF(\omega_{jt}))$$ where EDF is the empiri
     - Construct predictive function $f(\cdot)$.
 ]
 
-
-
-.panel[.panel-name[IV]
-
-IV estimator $$E\left[\log\left(\frac{s_{jt}}{s_{0t}}\right) \middle| z_{jt} \right] = E\left[x_{jt}| z_{jt}\right]'\beta^{0}+\sum_{\ell=1}^{L}E\left[\psi_{\ell}(\omega_{jt})| z_{jt}\right]'\gamma_{\ell}^{0}$$
-
-
-- Implementation is a simple 2SLS. 
-
-- Apply Gandhi-Houde instruments to build $z_{t}$ for market share terms and standard price instruments
-
-- Can use recent ML approaches for approximating optimal IV construction (see e.g., XXX), e.g., **MLIV's, cross-fitting, etc**, to automate building IV's for multiple endogenous regressors. 
-
-]
 ]
 ---
 
@@ -463,7 +457,7 @@ $$\begin{array}{c}{\zeta_{3}}\end{array} \sim \mathcal{N}\left(\left[\begin{arra
 
 ]
 
-.panel[.panel-name[Results]
+.panel[.panel-name[Elasticities]
 .pull-left[
 <table>
 <thead>
@@ -552,6 +546,21 @@ $$\begin{array}{c}{\zeta_{3}}\end{array} \sim \mathcal{N}\left(\left[\begin{arra
 
 ]
 ]
+
+ .panel[.panel-name[Distribution]
+ 
+ .pull-left[Unobservable <br>
+ ![](images/tri_npiv_order4_j20t700.png)
+ ]
+ 
+ .pull-right[Random Coefficient 
+ <br>
+```{r, echo=FALSE, out.height=290}
+knitr::include_graphics("images/bivar_T700_J20_4.png")
+```
+
+ ]
+ ]
 ]
 
 ---
@@ -569,56 +578,44 @@ $$\begin{array}{c}{\zeta_{3}}\end{array} \sim \mathcal{N}\left(\left[\begin{arra
 - US soda market in 2003: National level soda sales and treat each week as market (52 markets). 
 
 - We pick top 30 sub-brands with the largest sales across the whole time span and treat other sub-brands as an outside option.
+
+- Sodas can be sold either in bottles or cans: focus here only on cans and aggregate across different package sizes.
 ]
 
 .panel[.panel-name[Product Characteristics]
 
 <br><br>
 
-- Sodas can be sold either in bottles or cans: focus here only on cans and aggregate across different package sizes.
+Specification $$u_{ijt}=-\alpha_{0}p_{jt}+x_{1,jt}^{\top}\beta^{0}+\xi_{jt}+b_{t}+x_{2,jt}^{\top}\nu_{i}+\epsilon_{ijt}$$
 
-- Soda characteristics include flavor/scent, calorie level, caffeine level, and type of sweetener. Many binary characteristics.
+- $x_{1,jt} =$ "Sugar", "Caffeine", "Lemonade", "Cola", "Fruit, "Ginger Ale", "Pepper" and "Root Beer"
+- $x_{2,jt} =$ "Sugar", "Caffeine", "Cola" and "Ginger Ale"
+- $b_{t}$ is brand fixed effects. 
 
-- We put random coefficients on all non-price attributes and treat the price  with a fixed coefficient.
+We use FKRB estimator in the second stage nd set the number of grids in each direction to be 5 so the total number of grid points is 625. 
 ]
 
-.panel[.panel-name[Elasticities]
-
-![](images/elasticities.PNG)
-
-]
-]
-
----
-
-# Heterogeneity
-
-.panelset[
-
-.panel[.panel-name[Caffeine+Sugar]
+.panel[.panel-name[Results]
 
 
-![](images/Caffeine_Sugar_3RCs.png)
+```{r, echo=FALSE}
+knitr::include_graphics("images/sodaresults.png")
+```
 
 ]
 
-.panel[.panel-name[Cola+Caffeine]
+.panel[.panel-name[Heterogeneity]
 
-![](images/Cola_Caffeine_3RCs.png)
+.pull-left[![](images/marginals.png)]
+
+.pull-right[![](images/distributions.png)]
+]
+
+
 
 
 ]
 
-.panel[.panel-name[Cola+Sugar]
-
-![](images/Cola_Sugar_3RCs.png)
-]
-
-.panel[.panel-name[Marginals]
-
-![](images/heterogeneity.png)
-]
-]
 
 ---
 # Extension: Feature Selection
