@@ -4,9 +4,11 @@ subtitle: "Presentation for UCLA Mini-Conference"
 author: Amit Gandhi 
 institute: Microsoft and Upenn/Wharton
 date: "`r Sys.Date()`"
+header-includes:
+   - \usepackage{witharrows}
 output:
   xaringan::moon_reader:
-    css: [default, metropolis, metropolis-fonts, mystyle.css]
+    css: [default, "rladies", "rladies-fonts", fonts.css]
     lib_dir: libs
     nature:
       highlightStyle: github
@@ -25,9 +27,17 @@ options(htmltools.dir.version = FALSE)
 xaringanExtra::use_panelset()
 ```
 
+```{r xaringan-tachyons, echo=FALSE}
+xaringanExtra::use_tachyons()
+```
+
+
+
+
+
 layout: true
 background-image: url(images/pennlogo.png)
-background-position: 0% 100%
+background-position: 100% 0%
 background-size: 10%
 ---
 
@@ -200,12 +210,17 @@ When $F$ is degenerate, market demand is logit.
 ---
 
 layout: true
+background-image: url(images/pennlogo.png)
+background-position: 100% 0%
+background-size: 10%
 
 # But isn't this *just* a mixtures problem?
 
 ---
 
 ---
+
+
 
 ## Yes, but....
 
@@ -218,7 +233,19 @@ $$\sigma_{j}\left(x_{t}, \xi_{t} \right) =\int\frac{\exp\left(x_{jt}\beta_{i} + 
 $$\sigma_{j}\left(x_{t}, \color{red}{\xi_{t}} \right) =\int\frac{\exp\left(x_{jt}\beta_{i} + \color{red}{\xi_{jt}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{red}{\xi_{j^{\prime}t}}\right)}dF(\beta_{i}; \theta)$$
 ---
 
+$$\underbrace{\sigma_{j}\left(x_{t}, \color{red}{\xi_{t}} \right)}_{unknown} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i} + \color{red}{\xi_{jt}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{red}{\xi_{j^{\prime}t}}\right)}}_{unknown}\underbrace{dF(\beta_{i}; \theta)}_{unknown}$$
+
+--
+<br><br><br>
+## .center[All the terms are unknown!]
+
+
+---
+
 $$\require{cancel} \sigma_{j}\left(x_{t}, \color{red}{\cancel{\xi_{t}}} \right) =\int\frac{\exp\left(x_{jt}\beta_{i} + \color{red}{\cancel{\xi_{jt}}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{red}{\cancel{\xi_{j^{\prime}t}}}\right)}dF(\beta_{i}; \theta)$$
+<br><br><br>
+##  .center[what if we eliminate the structural errors]
+
 ---
 
 $$\require{cancel} \sigma_{j}\left(x_{t}, \color{red}{\cancel{\xi_{t}}} \right) =\int\frac{\exp\left(x_{jt}\beta_{i} + \color{red}{\cancel{\xi_{jt}}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{red}{\cancel{\xi_{j^{\prime}t}}}\right)}dF(\beta_{i}; \theta)$$
@@ -243,31 +270,50 @@ $$\require{cancel} \sigma_{j}\left(x_{t}, \color{red}{\cancel{\xi_{t}}} \right) 
 </center>
 
 $$\require{cancel} \underbrace{\sigma_{j}\left(x_{t}\right)}_{Data} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i}  \right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} \right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{unknown}$$
+
+<br>
+
+.center.large[This is now a standard mixtures problem ] 
+
+
+
+---
+
+$$\require{cancel} \sigma_{j}\left(x_{t}, \color{red}{\cancel{\xi_{t}}} \right) =\int\frac{\exp\left(x_{jt}\beta_{i} + \color{red}{\cancel{\xi_{jt}}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{red}{\cancel{\xi_{j^{\prime}t}}}\right)}dF(\beta_{i}; \theta)$$
+
 <center>
 <big><big><big><big><span>&#8615;</span></big></big></big></big>
 </center>
 
+$$\require{cancel} \underbrace{\sigma_{j}\left(x_{t}\right)}_{Data} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i}  \right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} \right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{unknown}$$
+
+<br>
+
+.center.large.blue[Observed Demand = Predicted Demand ] 
 
 
-.center[
-<font color = "blue">
-observed demand = predicted demand
-</font>
-]
 
---
-.center[
-$F$ identified and flexibly estimatable with $x_{t}$ variation.
-]
-
---
-
-.center[
-e.g., Fox and Gandhi (2016), Fox et al (2012)...
-]
 ---
 
-$$\sigma_{j}\left(x_{t}, \color{red}{\xi_{t}} \right) =\int\frac{\exp\left(x_{jt}\beta_{i} + \color{red}{\xi_{jt}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{red}{\xi_{j^{\prime}t}}\right)}dF(\beta_{i}; \theta)$$
+$$\require{cancel} \sigma_{j}\left(x_{t}, \color{red}{\cancel{\xi_{t}}} \right) =\int\frac{\exp\left(x_{jt}\beta_{i} + \color{red}{\cancel{\xi_{jt}}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{red}{\cancel{\xi_{j^{\prime}t}}}\right)}dF(\beta_{i}; \theta)$$
+
+<center>
+<big><big><big><big><span>&#8615;</span></big></big></big></big>
+</center>
+
+$$\require{cancel} \underbrace{\sigma_{j}\left(x_{t}\right)}_{Data} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i}  \right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} \right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{unknown}$$
+
+<br>
+
+.center[ .large[
+Now suppose we can condition on $\color{green}{\xi}$
+]
+]
+
+
+---
+
+$$\sigma_{j}\left(x_{t}, \color{green}{\xi_{t}} \right) =\int\frac{\exp\left(x_{jt}\beta_{i} + \color{green}{\xi_{jt}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{green}{\xi_{j^{\prime}t}}\right)}dF(\beta_{i}; \theta)$$
 
 <center>
 <big><big><big><big><span>&#8613;</span></big></big></big></big>
@@ -275,34 +321,217 @@ $$\sigma_{j}\left(x_{t}, \color{red}{\xi_{t}} \right) =\int\frac{\exp\left(x_{jt
 
 $$\require{cancel} \underbrace{\sigma_{j}\left(x_{t}\right)}_{Data} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i}  \right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} \right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{unknown}$$
 
---
+<br>
 
+.center[ .large[
+Now suppose we can condition on $\color{green}{\xi}$
+]
+]
 
-If we can condition on $\color{red}{\xi_t}$, the flexible estimation can be approached as a standard mixtures problem. 
 
 ---
 
-$$\underbrace{\sigma_{j}\left(x_{t}, \color{red}{\xi_{t}} \right)}_{Demand} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i} + \color{red}{\xi_{jt}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{red}{\xi_{j^{\prime}t}}\right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{Unknown}$$
+$$\sigma_{j}\left(x_{t}, \color{green}{\xi_{t}} \right) =\int\frac{\exp\left(x_{jt}\beta_{i} + \color{green}{\xi_{jt}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{green}{\xi_{j^{\prime}t}}\right)}dF(\beta_{i}; \theta)$$
+
 <center>
 <big><big><big><big><span>&#8613;</span></big></big></big></big>
 </center>
 
 $$\require{cancel} \underbrace{\sigma_{j}\left(x_{t}\right)}_{Data} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i}  \right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} \right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{unknown}$$
 
+<br>
+
+.center[ .large[
+We would have a standard mixtures problem
+]
+]
 
 
+---
 
-If we can condition on $\color{red}{\xi_t}$, the flexible estimation can be approached as a standard mixtures problem. 
+$$\underbrace{\sigma_{j}\left(x_{t}, \color{green}{\xi_{t}} \right)}_{Demand} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i} + \color{green}{\xi_{jt}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{green}{\xi_{j^{\prime}t}}\right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{Unknown}$$
 
+<center>
+<big><big><big><big><span>&#8613;</span></big></big></big></big>
+</center>
+
+$$\require{cancel} \underbrace{\sigma_{j}\left(x_{t}\right)}_{Data} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i}  \right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} \right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{unknown}$$
+
+<br>
+
+.center[ .large[
+We would have a standard mixtures problem
+]
+]
+
+---
+
+$$\underbrace{\sigma_{j}\left(x_{t}, \color{green}{\xi_{t}} \right)}_{Demand} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i} + \color{green}{\xi_{jt}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{green}{\xi_{j^{\prime}t}}\right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{Unknown}$$
+
+<center>
+<big><big><big><big><span>&#8613;</span></big></big></big></big>
+</center>
+
+$$\require{cancel} \underbrace{\sigma_{j}\left(x_{t}\right)}_{Data} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i}  \right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} \right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{unknown}$$
+
+<br>
+
+.center[ .large[
+Conditioning on $\color{green}{\xi}$ equivalent to **measuring demand**.
+]
+]
+
+
+---
+
+$$\underbrace{\sigma_{j}\left(x_{t}, \color{green}{\xi_{t}} \right)}_{Demand} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i} + \color{green}{\xi_{jt}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{green}{\xi_{j^{\prime}t}}\right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{Unknown}$$
+
+.pull-left[
+
+.large[
+
+Our empirical strategy consists of **two steps**:
+
+]
+
+]
 
 --
 
-Equivalent to measuring *demand*.
+.pull-right[
+
+.large[
+
+.blue[Step 1]
+
+Estimate demand (and recover $\xi$) **decoupled** from preferences.
+
+]
+
+]
+
+---
+
+$$\underbrace{\sigma_{j}\left(x_{t}, \color{green}{\xi_{t}} \right)}_{Demand} =\int\underbrace{\frac{\exp\left(x_{jt}\beta_{i} + \color{green}{\xi_{jt}}\right)}{1+\sum_{j'=1}^{J}\exp\left(x_{j^{\prime}t}\beta_{i} + \color{green}{\xi_{j^{\prime}t}}\right)}}_{Kernel}\underbrace{dF(\beta_{i}; \theta)}_{Unknown}$$
+
+.pull-left[
+
+.large[
+
+Our empirical strategy consists of **two steps**:
+
+]
+
+]
+
+
+
+.pull-right[
+
+.large[
+
+.blue[Step 2]
+
+Estimate preferences from demand as a **mixture model**
+
+]
+
+]
 
 
 ---
 layout: false
-# Demand
+class: middle center
+## What is the challenge? 
+
+.large[
+Demand is a function of **all** $J+1$ unobservables $\xi_{t}$ (including $\xi_{-jt}$)
+
+
+
+\begin{align*}
+s_j &= \sigma_{j}\left(x_t, \xi_t\right) \\
+&= \sigma_{j}\left(x_t, \xi_{jt}, \xi_{-jt}\right)
+\end{align*}
+
+]
+---
+layout: true
+background-image: url(images/pennlogo.png)
+background-position: 100% 0%
+background-size: 10%
+
+## How can we simplify?
+
+### Focus on **conditional** demand
+
+
+---
+
+
+.large[
+Demand for product $j$ .red[conditional] on quantities $s_{-j}$
+]
+
+---
+
+.fl.w-60[
+
+.large[
+
+We replace the unobservables $\color{blue}{\xi_{-j}}$ with markets shares $\color{green}{s_{-j}}$ in the demand $\sigma_{j}$. 
+
+]
+]
+
+--
+
+.fl.w-10[ 
+<br>
+<span>&#8614;</span>
+]
+
+.fl.w-30[
+
+.large[
+
+\begin{align*}
+s_j = \sigma_{j}(x_t, \xi_{jt}, & \color{blue}{\xi_{-jt}}) \\ 
+&\downarrow \\
+ \bar{\sigma}_{j}(x_t, \xi_{jt}, & \color{green}{s_{-jt}})
+\end{align*}
+
+]
+
+]
+
+
+--
+
+.fr.large[
+$\bar{\sigma}_{j}$ is the conditional demand function.
+]
+
+--
+
+
+.fr.large[
+.red[
+
+Conditional demand lets us isolate $\xi_{jt}$
+
+]
+]
+
+---
+layout: true
+background-image: url(images/pennlogo.png)
+background-position: 100% 0%
+background-size: 10%
+
+---
+
+# Conditional Demand
 .panelset[
 
 .panel[.panel-name[Setup]
@@ -325,7 +554,7 @@ Denote $$\beta^{0} = E[\beta_{i}]$$ <br> which completely characterizes $\theta 
 <br><br>
 
 Can express WLOG $$\ln\left(\frac{s_{jt}}{s_{0t}}\right) = \beta^{0} x_{jt} + \Delta_{j}(s_{t}, x_{t}) + \xi_{jt}$$ <br> <br>
-where $$\Delta_{j}\left(s_t, x_t\right) = \sigma^{-1}(s_t, x_{t}; \theta^{0}) - \sigma^{-1}(s_t, x_{t}; \theta^{logit})$$ <br> is the *quality gap* (see **Gandhi and Houde** 2020)
+where $$\Delta_{j}\left(s_t, x_t\right) = \sigma^{-1}(s_t, x_{t}; \theta^{0}) - \sigma^{-1}(s_t, x_{t}; \theta^{logit})$$ <br> is the *quality gap*.
 
 
 ]
